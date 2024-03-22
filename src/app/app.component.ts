@@ -17,10 +17,13 @@ export class AppComponent {
   onImageLoad(): void {
     console.log("Image loaded successfully!")
     var canvas = document.createElement("canvas")
+    canvas.width = this.imageRef.nativeElement.naturalWidth
+    canvas.height = this.imageRef.nativeElement.width
     const ctx = canvas.getContext("2d")
     if (ctx) {
-      ctx.drawImage(this.imageRef.nativeElement, canvas.width, canvas.height)
-      ctx.getImageData(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(this.imageRef.nativeElement, 0, 0, canvas.width, canvas.height)
+      const a = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      console.log(a)
     }
   }
 
