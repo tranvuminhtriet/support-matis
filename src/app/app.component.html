@@ -8,13 +8,19 @@
         alt="input-img"
         (load)="onImageLoad()"
         crossorigin="anonymous"
-        #imageRef
-      />
+        #imageRef />
     </div>
-    <button class="btn-primary" (click)="applyLayer($event)">Apply layer</button>
+    <button class="btn-primary" (click)="applyLayer($event)">
+      Apply layer
+    </button>
     <div class="element">
       <p>Output image</p>
-      <img *ngIf="!!imgToShow" class="img-wrapper" [src]="imgToShow" alt="ouput-img" crossorigin="anonymous" />
+      <img
+        *ngIf="!!imgToShow"
+        class="img-wrapper"
+        [src]="imgToShow"
+        alt="ouput-img"
+        crossorigin="anonymous" />
     </div>
   </div>
 </main>
