@@ -14,7 +14,13 @@
     <button class="btn-primary" (click)="applyLayer($event)">Apply layer</button>
     <div class="element">
       <p>Output image</p>
-      <img *ngIf="!!imgToShow" class="img-wrapper" [src]="imgToShow" alt="ouput-img" crossorigin="anonymous" />
+      <img
+        *ngIf="!!imageToShow.src"
+        class="img-wrapper"
+        [src]="imageToShow.src"
+        alt="ouput-img"
+        crossorigin="anonymous"
+      />
     </div>
   </div>
 </main>
