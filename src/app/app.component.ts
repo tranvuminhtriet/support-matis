@@ -22,8 +22,8 @@ export class AppComponent {
     const ctx = canvas.getContext("2d")
     if (ctx) {
       ctx.drawImage(this.imageRef.nativeElement, 0, 0, canvas.width, canvas.height)
-      const a = ctx.getImageData(0, 0, canvas.width, canvas.height)
-      console.log(a)
+      const dataInputImage = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      console.log(dataInputImage)
     }
   }
 
