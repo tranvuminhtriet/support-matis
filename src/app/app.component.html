@@ -23,10 +23,10 @@
       />
     </div>
     <div *ngIf="!!imageToShow.src" style="display: flex; gap: 10px">
-      <button style="color: red" (click)="applyRed()">Red</button>
-      <button style="color: green" (click)="applyGreen()">Green</button>
-      <button style="color: blue" (click)="applyBlue()">Blue</button>
-      <button style="color: yellow" (click)="applyYellow()">Yellow</button>
+      <button style="color: red" (click)="applyColor('red')">Red</button>
+      <button style="color: green" (click)="applyColor('green')">Green</button>
+      <button style="color: blue" (click)="applyColor('blue')">Blue</button>
+      <button style="color: yellow" (click)="applyColor('yellow')">Yellow</button>
     </div>
   </div>
 </main>

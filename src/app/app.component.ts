@@ -114,25 +114,9 @@ export class AppComponent {
     return coordinates
   }
 
-  applyRed() {
-    if (this.selectedColor === "red") return
-    this.selectedColor = "red"
-
-    this.applyLayer()
-  }
-  applyGreen() {
-    if (this.selectedColor === "green") return
-    this.selectedColor = "green"
-    this.applyLayer()
-  }
-  applyBlue() {
-    if (this.selectedColor === "blue") return
-    this.selectedColor = "blue"
-    this.applyLayer()
-  }
-  applyYellow() {
-    if (this.selectedColor === "yellow") return
-    this.selectedColor = "yellow"
+  applyColor(color: Color) {
+    if (this.selectedColor === color) return
+    this.selectedColor = color
     this.applyLayer()
   }
 }
