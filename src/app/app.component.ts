@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild } from "@angular/core"
 import { InputDataType, Pixel } from "./types/InputData"
+import { Color } from "./types/Color"
 
 @Component({
   selector: "app-root",
@@ -8,6 +9,15 @@ import { InputDataType, Pixel } from "./types/InputData"
 })
 export class AppComponent {
   @ViewChild("imageRef") imageRef!: ElementRef<any>
+
+  selectedColor: Color = "red"
+
+  colorRBG = {
+    yellow: { r: 255, g: 255, b: 0 },
+    red: { r: 255, g: 0, b: 0 },
+    blue: { r: 0, g: 0, b: 255 },
+    green: { r: 0, g: 255, b: 0 },
+  }
 
   inputImgSrc = "/assets/IMG_vis.jpeg"
 
@@ -47,7 +57,7 @@ export class AppComponent {
     return canvas
   }
 
-  applyLayer(e: any) {
+  applyLayer() {
     var canvas = document.createElement("canvas")
     canvas.width = this.imageRef.nativeElement.naturalWidth
     canvas.height = this.imageRef.nativeElement.naturalHeight
@@ -57,10 +67,9 @@ export class AppComponent {
       ctx.drawImage(this.imageRef.nativeElement, 0, 0, canvas.width, canvas.height)
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 
-      const inputData = this.generateInputArray(6000000, "yellow", imageData.width, imageData.height)
+      const inputData = this.generateInputArray(this.selectedColor, imageData.width, imageData.height)
       for (let i = 0; i < inputData.pixels.length; i++) {
-        // yellow: 255, 255, 0
-        this.updatePixelColor(imageData, inputData.pixels[i].x, inputData.pixels[i].y, 255, 255, 0)
+        this.updatePixelColor(imageData, inputData.pixels[i].x, inputData.pixels[i].y, inputData.color)
       }
 
       ctx.putImageData(imageData, 0, 0)
@@ -68,41 +77,12 @@ export class AppComponent {
     }
   }
 
-  generateFlowerinatesWithinImage(radius: number, imageWidth: number, imageHeight: number): Pixel[] {
-    const numPetals = 8
-    const angleIncrement = (2 * Math.PI) / numPetals
-
-    const centerX = imageWidth / 2
-    const centerY = imageHeight / 2
-
-    const coordinates: Pixel[] = []
-
-    for (let i = 0; i < numPetals; i++) {
-      const angle = i * angleIncrement
-      const x = centerX + radius * Math.cos(angle)
-      const y = centerY + radius * Math.sin(angle)
-      coordinates.push({ x, y })
-    }
-
-    return coordinates
-  }
-
-  generateInputArray(
-    numItems: number,
-    color: "red" | "blue" | "green" | "yellow",
-    imgWidth: number,
-    imgHeight: number
-  ): InputDataType {
-    const coordinates: Pixel[] = []
-    for (let i = 0; i < numItems; i++) {
-      const x = Math.floor(Math.random() * imgWidth)
-      const y = Math.floor(Math.random() * imgHeight)
-      coordinates.push({ x, y })
-    }
+  generateInputArray(color: Color, imgWidth: number, imgHeight: number): InputDataType {
+    const coordinates: Pixel[] = this.drawCircleCoordinates(imgWidth, imgHeight)
     return { color, pixels: coordinates }
   }
 
-  updatePixelColor(imageData: ImageData, x: number, y: number, red: number, green: number, blue: number): void {
+  updatePixelColor(imageData: ImageData, x: number, y: number, color: Color): void {
     // Ensure coordinates are within bounds
     if (x < 0 || x > imageData.width || y < 0 || y > imageData.height) {
       console.error("Coordinates out of bounds.")
@@ -111,8 +91,48 @@ export class AppComponent {
     // Calculate the index of the pixel in the array
     const index = (y * imageData.width + x) * 4
     // Update pixel color
-    imageData.data[index] = red // Red channel
-    imageData.data[index + 1] = green // Green channel
-    imageData.data[index + 2] = blue // Blue channel
+    imageData.data[index] = this.colorRBG[color].r // Red channel
+    imageData.data[index + 1] = this.colorRBG[color].g // Green channel
+    imageData.data[index + 2] = this.colorRBG[color].b // Blue channel
+  }
+
+  drawCircleCoordinates(width: number, height: number) {
+    const cloudRadius = Math.min(width, height) * 0.4
+    const cloudCenterX = width / 2
+    const cloudCenterY = height / 2
+    const coordinates = []
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const dx = cloudCenterX - x
+        const dy = cloudCenterY - y
+        const distanceFromCenter = Math.sqrt(dx * dx + dy * dy)
+        if (distanceFromCenter <= cloudRadius) {
+          coordinates.push({ x, y })
+        }
+      }
+    }
+    return coordinates
+  }
+
+  applyRed() {
+    if (this.selectedColor === "red") return
+    this.selectedColor = "red"
+
+    this.applyLayer()
+  }
+  applyGreen() {
+    if (this.selectedColor === "green") return
+    this.selectedColor = "green"
+    this.applyLayer()
+  }
+  applyBlue() {
+    if (this.selectedColor === "blue") return
+    this.selectedColor = "blue"
+    this.applyLayer()
+  }
+  applyYellow() {
+    if (this.selectedColor === "yellow") return
+    this.selectedColor = "yellow"
+    this.applyLayer()
   }
 }

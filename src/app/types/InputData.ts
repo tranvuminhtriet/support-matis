@@ -1,8 +1,10 @@
+import { Color } from "./Color"
+
 export type Pixel = {
   x: number
   y: number
 }
 export type InputDataType = {
-  color: string
+  color: Color
   pixels: Pixel[]
 }

@@ -11,7 +11,7 @@
         #imageRef
       />
     </div>
-    <button class="btn-primary" (click)="applyLayer($event)">Apply layer</button>
+    <button class="btn-primary" (click)="applyLayer()">Apply layer</button>
     <div class="element">
       <p>Output image</p>
       <img
@@ -21,6 +21,12 @@
         alt="ouput-img"
         crossorigin="anonymous"
       />
+    </div>
+    <div *ngIf="!!imageToShow.src" style="display: flex; gap: 10px">
+      <button style="color: red" (click)="applyRed()">Red</button>
+      <button style="color: green" (click)="applyGreen()">Green</button>
+      <button style="color: blue" (click)="applyBlue()">Blue</button>
+      <button style="color: yellow" (click)="applyYellow()">Yellow</button>
     </div>
   </div>
 </main>
