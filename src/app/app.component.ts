@@ -29,7 +29,7 @@ export class AppComponent {
 
   constructor() {
     this.imageToShow = new Image();
-    this.opacityPercent = 50;
+    this.opacityPercent = 100;
   }
 
   onImageLoad(): void {
@@ -88,12 +88,13 @@ export class AppComponent {
     console.log(`Pixel Info:\nX: ${x}, Y: ${y}\n${pixelInfo}`);
   }
 
-  changeRange(target: any) {
+  async changeRange(target: any) {
     this.opacityPercent = target.value;
-    this.applyLayer();
+    await this.applyLayer();
+    console.log('opacity percent: ', this.opacityPercent);
   }
 
-  applyLayer() {
+  async applyLayer() {
     this.layers = [];
     var canvas = document.createElement('canvas');
     canvas.width = this.imageRef.nativeElement.naturalWidth;
@@ -108,27 +109,76 @@ export class AppComponent {
         canvas.width,
         canvas.height
       );
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      this.layers.push(imageData);
+      let originalData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      this.layers.push(originalData);
+
+      // Tạo một bản sao của imageData trước khi thay đổi
+      let updatedImageData = new ImageData(
+        new Uint8ClampedArray(originalData.data),
+        originalData.width,
+        originalData.height
+      );
+
       const inputData = this.generateInputArray(
         this.selectedColor,
-        imageData.width,
-        imageData.height
+        originalData.width,
+        originalData.height
       );
-      for (let i = 0; i < inputData.pixels.length; i++) {
-        this.updatePixelColor(
-          imageData,
-          inputData.pixels[i].x,
-          inputData.pixels[i].y,
-          inputData.color,
-          this.opacityPercent
-        );
+
+      updatedImageData = this.updatePixelColor(updatedImageData, inputData);
+
+      ctx.putImageData(updatedImageData, 0, 0);
+      this.imageToShow.src = canvas.toDataURL('image/jpeg');
+
+      this.layers.push(updatedImageData);
+    }
+  }
+
+  updatePixelColor(imageData: ImageData, inputData: InputDataType): ImageData {
+    const { color, pixels } = inputData;
+    for (const pixel of pixels) {
+      if (
+        pixel.x < 0 ||
+        pixel.x >= imageData.width ||
+        pixel.y < 0 ||
+        pixel.y >= imageData.height
+      ) {
+        console.error('Coordinates out of bounds.');
+        throw Error();
       }
 
-      ctx.putImageData(imageData, 0, 0);
-      this.imageToShow.src = canvas.toDataURL('image/jpeg');
-      this.layers.push(imageData);
+      const alpha = this.opacityPercent / 100;
+
+      const index = (pixel.y * imageData.width + pixel.x) * 4;
+
+      // Original color of the pixel
+      const originalRed = imageData.data[index];
+      const originalGreen = imageData.data[index + 1];
+      const originalBlue = imageData.data[index + 2];
+      const originalAlpha = imageData.data[index + 3] / 255; // Convert alpha to range 0 to 1
+
+      // New color with opacity
+      const newRed = Math.round(
+        originalRed * (1 - alpha) + this.colorRBG[color].r * alpha
+      );
+      const newGreen = Math.round(
+        originalGreen * (1 - alpha) + this.colorRBG[color].g * alpha
+      );
+      const newBlue = Math.round(
+        originalBlue * (1 - alpha) + this.colorRBG[color].b * alpha
+      );
+      const newAlpha = Math.round(
+        (originalAlpha + alpha - originalAlpha * alpha) * 255
+      );
+
+      // Update pixel color and opacity
+      imageData.data[index] = newRed; // Red channel
+      imageData.data[index + 1] = newGreen; // Green channel
+      imageData.data[index + 2] = newBlue; // Blue channel
+      imageData.data[index + 3] = newAlpha; // Alpha (opacity)
     }
+
+    return imageData;
   }
 
   generateInputArray(
@@ -141,51 +191,6 @@ export class AppComponent {
       imgHeight
     );
     return { color, pixels: coordinates };
-  }
-
-  updatePixelColor(
-    imageData: ImageData,
-    x: number,
-    y: number,
-    color: Color,
-    opacityPercent: number // Opacity in percentage (0 - 100)
-  ): ImageData {
-    if (x < 0 || x >= imageData.width || y < 0 || y >= imageData.height) {
-      console.error('Coordinates out of bounds.');
-      throw Error();
-    }
-
-    const alpha = opacityPercent / 100;
-
-    const index = (y * imageData.width + x) * 4;
-
-    // Original color of the pixel
-    const originalRed = imageData.data[index];
-    const originalGreen = imageData.data[index + 1];
-    const originalBlue = imageData.data[index + 2];
-    const originalAlpha = imageData.data[index + 3] / 255; // Convert alpha to range 0 to 1
-
-    // New color with opacity
-    const newRed = Math.round(
-      originalRed * (1 - alpha) + this.colorRBG[color].r * alpha
-    );
-    const newGreen = Math.round(
-      originalGreen * (1 - alpha) + this.colorRBG[color].g * alpha
-    );
-    const newBlue = Math.round(
-      originalBlue * (1 - alpha) + this.colorRBG[color].b * alpha
-    );
-    const newAlpha = Math.round(
-      (originalAlpha + alpha - originalAlpha * alpha) * 255
-    );
-
-    // Update pixel color and opacity
-    imageData.data[index] = newRed; // Red channel
-    imageData.data[index + 1] = newGreen; // Green channel
-    imageData.data[index + 2] = newBlue; // Blue channel
-    imageData.data[index + 3] = newAlpha; // Alpha (opacity)
-
-    return imageData;
   }
 
   drawCircleCoordinates(width: number, height: number) {
@@ -206,9 +211,9 @@ export class AppComponent {
     return coordinates;
   }
 
-  applyColor(color: Color) {
+  async applyColor(color: Color) {
     if (this.selectedColor === color) return;
     this.selectedColor = color;
-    this.applyLayer();
+    await this.applyLayer();
   }
 }
