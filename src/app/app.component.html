@@ -1,24 +1,4 @@
 <main class="main">
-  <div class="container">
-    <div class="element">
-      <p>Input image</p>
-      <img class="img-wrapper" [src]="inputImgSrc" alt="input-img" (load)="onImageLoad()" crossorigin="anonymous"
-        #imageRef />
-    </div>
-    <button class="btn-primary" (click)="applyLayer()">Apply layer</button>
-    <div class="element">
-      <p>Output image</p>
-      <img *ngIf="!!imageToShow.src" class="img-wrapper" [src]="imageToShow.src" alt="ouput-img" crossorigin="anonymous"
-        (click)="onClick($event)" />
-    </div>
-    <div *ngIf="!!imageToShow.src" style="display: flex; gap: 10px">
-      <button style="color: red" (click)="applyColor('red')">Red</button>
-      <button style="color: green" (click)="applyColor('green')">Green</button>
-      <button style="color: blue" (click)="applyColor('blue')">Blue</button>
-      <button style="color: yellow" (click)="applyColor('yellow')">Yellow</button>
-      <label for="vol">Opacity (between 0 and 100):</label>
-      <input type="range" value="100" min="0" max="100" (change)="changeRange($event.target)" />
-    </div>
-  </div>
+  <app-image-with-layer />
 </main>
 <router-outlet />

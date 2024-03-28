@@ -1,0 +1,20 @@
+<div style="display: flex; gap: 20px">
+  <div>
+    <h1>Full-filled:</h1>
+    <img class="img-wrapper" src="/assets/full-filled.png" alt="input-img" crossorigin="anonymous" #imageRef />
+  </div>
+  <div style="width: 1px; background-color: black"></div>
+  <div>
+    <div style="display: flex; gap: 10px; margin-bottom: 30px">
+      <button
+        *ngFor="let data of inputData"
+        [style.background-color]="data.colorHex"
+        style="cursor: pointer"
+        (click)="drawLayer(data.colorName)"
+      >
+        {{ data.colorName }}
+      </button>
+    </div>
+    <canvas #canvas class="canvas-wrapper"> </canvas>
+  </div>
+</div>
