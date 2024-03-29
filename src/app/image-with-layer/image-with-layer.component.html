@@ -1,19 +1,35 @@
 <div style="display: flex; gap: 20px">
   <div>
     <h1>Full-filled:</h1>
-    <img class="img-wrapper" src="/assets/full-filled.png" alt="input-img" crossorigin="anonymous" #imageRef />
+    <img class="img-wrapper" src="/assets/full-filled.png" alt="input-img" crossorigin="anonymous" />
   </div>
   <div style="width: 1px; background-color: black"></div>
   <div>
     <div style="display: flex; gap: 10px; margin-bottom: 30px">
-      <button
-        *ngFor="let data of inputData"
-        [style.background-color]="data.colorHex"
-        style="cursor: pointer"
-        (click)="drawLayer(data.colorName)"
-      >
-        {{ data.colorName }}
-      </button>
+      <div style="display: flex; flex-direction: column; gap: 5px" *ngFor="let data of inputData; index as i">
+        <button [style.background-color]="data.colorHex" style="cursor: pointer" (click)="drawLayer(i)">
+          {{ data.colorName }}
+        </button>
+        <button
+          *ngIf="layerExists(data.colorName)"
+          [style.background-color]="data.colorHex"
+          style="cursor: pointer"
+          (click)="removeLayer(data.colorName)"
+        >
+          X
+        </button>
+        <!-- <input
+        *ngIf="layerExists(data.colorName)"
+        type="number"
+        [(ngModel)]="getOpacity(data.colorName)"
+        placeholder="Opacity (0-1)"
+        min="0"
+        max="1"
+        step="0.1"
+        (input)="updateOpacity( $event.target.value,data.colorName)"
+
+      /> -->
+      </div>
     </div>
     <canvas #canvas class="canvas-wrapper"> </canvas>
   </div>
