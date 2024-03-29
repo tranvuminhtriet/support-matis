@@ -1,46 +1,40 @@
+<div style="width: 1px; background-color: black"></div>
 <div style="display: flex; gap: 20px">
-  <div>
-    <h1>Full-filled:</h1>
-    <img class="img-wrapper" src="/assets/full-filled.png" alt="input-img" crossorigin="anonymous" />
-  </div>
-  <div style="width: 1px; background-color: black"></div>
-  <div style="display: flex; gap: 20px">
-    <canvas #canvas class="canvas-wrapper"> </canvas>
-    <!-- Modify color -->
-    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px">
-      <div style="display: flex; gap: 5px" *ngFor="let data of inputData; index as i">
-        <button
-          [disabled]="layerExists(data.colorName)"
-          [style.background-color]="data.colorHex"
-          style="cursor: pointer"
-          (click)="drawLayer(i)"
-        >
-          {{ data.colorName }}
-        </button>
-        <button
-          *ngIf="layerExists(data.colorName)"
-          [style.background-color]="data.colorHex"
-          style="cursor: pointer"
-          (click)="removeLayer(data.colorName)"
-        >
-          X
-        </button>
-        <input
-          *ngIf="layerExists(data.colorName)"
-          type="range"
-          [value]="getOpacity(data.colorName)"
-          min="0"
-          max="1"
-          step="0.1"
-          (input)="updateOpacity($event, data.colorName)"
-        />
-        <input
-          *ngIf="layerExists(data.colorName)"
-          type="color"
-          [value]="data.colorHex"
-          (change)="onColorChange($event, data.colorName)"
-        />
-      </div>
+  <canvas #canvas class="canvas-wrapper"> </canvas>
+  <!-- Modify color -->
+  <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px">
+    <div style="display: flex; gap: 5px" *ngFor="let data of inputData; index as i">
+      <button
+        [disabled]="layerExists(data.colorName)"
+        [style.background-color]="data.colorHex"
+        style="cursor: pointer"
+        (click)="drawLayer(i)"
+      >
+        {{ data.colorName }}
+      </button>
+      <button
+        *ngIf="layerExists(data.colorName)"
+        [style.background-color]="data.colorHex"
+        style="cursor: pointer"
+        (click)="removeLayer(data.colorName)"
+      >
+        X
+      </button>
+      <input
+        *ngIf="layerExists(data.colorName)"
+        type="range"
+        [value]="getOpacity(data.colorName)"
+        min="0"
+        max="1"
+        step="0.1"
+        (input)="updateOpacity($event, data.colorName)"
+      />
+      <input
+        *ngIf="layerExists(data.colorName)"
+        type="color"
+        [value]="data.colorHex"
+        (change)="onColorChange($event, data.colorName)"
+      />
     </div>
   </div>
 </div>
