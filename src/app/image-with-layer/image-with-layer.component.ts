@@ -13,14 +13,14 @@ export class ImageWithLayerComponent implements AfterViewInit {
     colorName?: string
     opacity: number
     image: HTMLImageElement
-    defaultColor: string
-    updatedColor?: string
+    filterColor?: string
   }[] = []
 
   onColorChange($event: any, colorName?: string) {
     console.log($event.target.value)
     const index = this.layers.findIndex((layer) => layer.colorName === colorName)
-    this.layers[index].updatedColor = $event.target.value
+    const filter = this.generateFilter($event.target.value)
+    this.layers[index].filterColor = filter.color ?? undefined
     this.drawAllLayers()
   }
 
@@ -67,7 +67,7 @@ export class ImageWithLayerComponent implements AfterViewInit {
         context?.drawImage(image, 0, 0)
       }
       image.src = src
-      this.layers.push({ image: image, opacity: 1, defaultColor: "" })
+      this.layers.push({ image: image, opacity: 1 })
     }
   }
 
@@ -79,7 +79,6 @@ export class ImageWithLayerComponent implements AfterViewInit {
         colorName: this.inputData[i].colorName,
         image: newImg,
         opacity: 1,
-        defaultColor: this.inputData[i].colorHex,
       })
       this.drawAllLayers()
     }
@@ -119,9 +118,8 @@ export class ImageWithLayerComponent implements AfterViewInit {
         context.globalAlpha = layer.opacity // Set opacity for each layer
 
         // Adjust color
-        if (layer.updatedColor != layer.defaultColor && !!layer.updatedColor) {
-          const newColorFilter = this.generateFilter(layer.updatedColor)
-          context.filter = newColorFilter.color ? newColorFilter.color : ""
+        if (layer.filterColor) {
+          context.filter = layer.filterColor
         } else {
           context.filter = "none"
         }
