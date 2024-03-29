@@ -18,17 +18,16 @@
         >
           X
         </button>
-        <!-- <input
-        *ngIf="layerExists(data.colorName)"
-        type="number"
-        [(ngModel)]="getOpacity(data.colorName)"
-        placeholder="Opacity (0-1)"
-        min="0"
-        max="1"
-        step="0.1"
-        (input)="updateOpacity( $event.target.value,data.colorName)"
-
-      /> -->
+        <input
+          *ngIf="layerExists(data.colorName)"
+          type="number"
+          [value]="getOpacity(data.colorName)"
+          placeholder="Opacity (0-1)"
+          min="0"
+          max="1"
+          step="0.1"
+          (input)="updateOpacity($event, data.colorName)"
+        />
       </div>
     </div>
     <canvas #canvas class="canvas-wrapper"> </canvas>

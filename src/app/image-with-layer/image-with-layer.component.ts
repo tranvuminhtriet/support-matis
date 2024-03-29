@@ -74,10 +74,10 @@ export class ImageWithLayerComponent implements AfterViewInit {
     return layer ? layer.opacity : 1 // default opacity is 1
   }
 
-  updateOpacity(opacity: string, colorName?: string): void {
+  updateOpacity(event: any, colorName?: string): void {
     const layerIndex = this.layers.findIndex((layer) => layer.colorName === colorName)
-    if (layerIndex !== -1) {
-      this.layers[layerIndex].opacity = parseFloat(opacity)
+    if (layerIndex !== -1 && !!event) {
+      this.layers[layerIndex].opacity = parseFloat(event.target.value)
       this.drawAllLayers()
     }
   }
