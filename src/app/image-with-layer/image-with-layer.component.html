@@ -7,7 +7,12 @@
   <div>
     <div style="display: flex; gap: 10px; margin-bottom: 30px">
       <div style="display: flex; flex-direction: column; gap: 5px" *ngFor="let data of inputData; index as i">
-        <button [style.background-color]="data.colorHex" style="cursor: pointer" (click)="drawLayer(i)">
+        <button
+          [disabled]="layerExists(data.colorName)"
+          [style.background-color]="data.colorHex"
+          style="cursor: pointer"
+          (click)="drawLayer(i)"
+        >
           {{ data.colorName }}
         </button>
         <button

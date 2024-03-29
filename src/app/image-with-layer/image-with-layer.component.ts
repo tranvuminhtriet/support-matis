@@ -28,6 +28,7 @@ export class ImageWithLayerComponent implements AfterViewInit {
     { colorName: "i13", colorHex: "#990200", src: "/assets/i13.png" },
     { colorName: "i14", colorHex: "#000566", src: "/assets/i14.png" },
     { colorName: "i15", colorHex: "#282828", src: "/assets/i15.png" },
+    { colorName: "test", colorHex: "#fffff", src: "/assets/test.png" },
   ]
 
   ngAfterViewInit(): void {
@@ -42,18 +43,28 @@ export class ImageWithLayerComponent implements AfterViewInit {
       canvas.height = image.height
     }
     image.src = this.inputData[0].src
+    this.generateFirstLayer("/assets/init.png")
+  }
+
+  generateFirstLayer(src?: string) {
+    if (src) {
+      const image = new Image()
+      const canvas = this.canvasRef.nativeElement
+      const context = canvas.getContext("2d")
+      image.onload = () => {
+        context?.drawImage(image, 0, 0)
+      }
+      image.src = src
+      this.layers.push({ image: image, opacity: 1 })
+    }
   }
 
   drawLayer(i: number) {
-    const canvas = this.canvasRef.nativeElement
-    const context = canvas.getContext("2d")
-    if (context) {
-      const newImg = new Image()
-      newImg.src = this.inputData[i].src
-      newImg.onload = () => {
-        this.layers.push({ colorName: this.inputData[i].colorName, image: newImg, opacity: 1 })
-        this.drawAllLayers()
-      }
+    const newImg = new Image()
+    newImg.src = this.inputData[i].src
+    newImg.onload = () => {
+      this.layers.push({ colorName: this.inputData[i].colorName, image: newImg, opacity: 1 })
+      this.drawAllLayers()
     }
   }
 
