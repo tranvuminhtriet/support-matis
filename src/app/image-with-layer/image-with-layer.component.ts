@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core"
-import { MockedInputType } from "./types/MockedInputType"
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core"
+import CssFilterConverter from "css-filter-converter"
 
 @Component({
   selector: "app-image-with-layer",
@@ -9,25 +9,37 @@ import { MockedInputType } from "./types/MockedInputType"
 export class ImageWithLayerComponent implements AfterViewInit {
   @ViewChild("canvas") canvasRef!: ElementRef<HTMLCanvasElement>
 
-  layers: { colorName?: string; opacity: number; image: HTMLImageElement }[] = []
-  selectedColor = []
+  layers: {
+    colorName?: string
+    opacity: number
+    image: HTMLImageElement
+    defaultColor: string
+    updatedColor?: string
+  }[] = []
 
-  inputData: MockedInputType = [
-    { colorName: "i1", colorHex: "#a90c22", src: "/assets/i1.png" },
-    { colorName: "i2", colorHex: "#fa99ff", src: "/assets/i2.png" },
-    { colorName: "i3", colorHex: "#c86477", src: "/assets/i3.png" },
-    { colorName: "i4", colorHex: "#3333ff", src: "/assets/i4.png" },
-    { colorName: "i5", colorHex: "#6464ff", src: "/assets/i5.png" },
-    { colorName: "i6", colorHex: "#fa9934", src: "/assets/i6.png" },
-    { colorName: "i7", colorHex: "#073300", src: "/assets/i7.png" },
-    { colorName: "i8", colorHex: "#36cc00", src: "/assets/i8.png" },
-    { colorName: "i9", colorHex: "#280128", src: "/assets/i9.png" },
-    { colorName: "i10", colorHex: "#cccc01", src: "/assets/i10.png" },
-    { colorName: "i11", colorHex: "#0113cc", src: "/assets/i11.png" },
-    { colorName: "i12", colorHex: "#f80e7f", src: "/assets/i12.png" },
-    { colorName: "i13", colorHex: "#990200", src: "/assets/i13.png" },
-    { colorName: "i14", colorHex: "#000566", src: "/assets/i14.png" },
-    { colorName: "i15", colorHex: "#282828", src: "/assets/i15.png" },
+  onColorChange($event: any, colorName?: string) {
+    console.log($event.target.value)
+    const index = this.layers.findIndex((layer) => layer.colorName === colorName)
+    this.layers[index].updatedColor = $event.target.value
+    this.drawAllLayers()
+  }
+
+  inputData = [
+    { colorName: "i1", colorHex: "#a90c22", src: "/assets/i1.jpg" },
+    { colorName: "i2", colorHex: "#fa99ff", src: "/assets/i2.jpg" },
+    { colorName: "i3", colorHex: "#c86477", src: "/assets/i3.jpg" },
+    { colorName: "i4", colorHex: "#3333ff", src: "/assets/i4.jpg" },
+    { colorName: "i5", colorHex: "#6464ff", src: "/assets/i5.jpg" },
+    { colorName: "i6", colorHex: "#fa9934", src: "/assets/i6.jpg" },
+    { colorName: "i7", colorHex: "#073300", src: "/assets/i7.jpg" },
+    { colorName: "i8", colorHex: "#36cc00", src: "/assets/i8.jpg" },
+    { colorName: "i9", colorHex: "#280128", src: "/assets/i9.jpg" },
+    { colorName: "i10", colorHex: "#cccc01", src: "/assets/i10.jpg" },
+    { colorName: "i11", colorHex: "#0113cc", src: "/assets/i11.jpg" },
+    { colorName: "i12", colorHex: "#f80e7f", src: "/assets/i12.jpg" },
+    { colorName: "i13", colorHex: "#990200", src: "/assets/i13.jpg" },
+    { colorName: "i14", colorHex: "#000566", src: "/assets/i14.jpg" },
+    { colorName: "i15", colorHex: "#282828", src: "/assets/i15.jpg" },
     { colorName: "test", colorHex: "#fffff", src: "/assets/test.png" },
   ]
 
@@ -55,7 +67,7 @@ export class ImageWithLayerComponent implements AfterViewInit {
         context?.drawImage(image, 0, 0)
       }
       image.src = src
-      this.layers.push({ image: image, opacity: 1 })
+      this.layers.push({ image: image, opacity: 1, defaultColor: "" })
     }
   }
 
@@ -63,7 +75,12 @@ export class ImageWithLayerComponent implements AfterViewInit {
     const newImg = new Image()
     newImg.src = this.inputData[i].src
     newImg.onload = () => {
-      this.layers.push({ colorName: this.inputData[i].colorName, image: newImg, opacity: 1 })
+      this.layers.push({
+        colorName: this.inputData[i].colorName,
+        image: newImg,
+        opacity: 1,
+        defaultColor: this.inputData[i].colorHex,
+      })
       this.drawAllLayers()
     }
   }
@@ -100,8 +117,21 @@ export class ImageWithLayerComponent implements AfterViewInit {
       context.clearRect(0, 0, canvas.width, canvas.height)
       for (const layer of this.layers) {
         context.globalAlpha = layer.opacity // Set opacity for each layer
+
+        // Adjust color
+        if (layer.updatedColor != layer.defaultColor && !!layer.updatedColor) {
+          const newColorFilter = this.generateFilter(layer.updatedColor)
+          context.filter = newColorFilter.color ? newColorFilter.color : ""
+        } else {
+          context.filter = "none"
+        }
+
         context.drawImage(layer.image, 0, 0)
       }
     }
+  }
+
+  generateFilter(hexColor: string) {
+    return CssFilterConverter.hexToFilter(hexColor)
   }
 }
