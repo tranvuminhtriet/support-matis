@@ -43,7 +43,7 @@ export class ImageWithLayerComponent implements AfterViewInit {
       canvas.height = image.height
     }
     image.src = this.inputData[0].src
-    this.generateFirstLayer("/assets/init.png")
+    this.generateFirstLayer("/assets/init.jpg")
   }
 
   generateFirstLayer(src?: string) {
