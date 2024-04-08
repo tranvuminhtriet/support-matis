@@ -1,6 +1,19 @@
-<div style="width: 1px; background-color: black"></div>
 <div style="display: flex; gap: 20px">
-  <canvas #canvas class="canvas-wrapper"> </canvas>
+  <div style="max-width: 550px; overflow: hidden; position: relative">
+    <div
+      [ngDraggable]="true"
+      [position]="chartPosition"
+      [zIndex]="'10'"
+      style="position: absolute; border-radius: 50%; overflow: hidden"
+      (movingOffset)="onChartMoving($event)"
+      (endOffset)="onMoveEnd($event)"
+      [@sizeAnimation]="isBigChart ? 'big' : 'small'"
+    >
+      <canvas (dblclick)="toggleSize()" #chart [style.visibility]="chartVisibility"></canvas>
+    </div>
+    <canvas #canvas2 (click)="getMousePositionToShowChart($event)" style="position: absolute"> </canvas>
+    <canvas #canvas> </canvas>
+  </div>
   <!-- Modify color -->
   <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px">
     <div style="display: flex; gap: 5px" *ngFor="let data of inputData; index as i">
